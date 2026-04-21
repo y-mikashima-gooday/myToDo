@@ -1,0 +1,60 @@
+body {
+    font-family: sans-serif;
+    background-color: #f4f4f9;
+    padding: 20px;
+}
+
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* 入力エリアのレイアウト */
+.input-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+#task-input {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* 追加ボタンのデザインと配置 */
+#add-btn {
+    position: absolute;
+    left: 0;     /* 意図的に左端に配置 */
+    top: 0;
+    height: 100%;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 0 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.footer {
+    margin-top: 20px;
+    text-align: right;
+}
