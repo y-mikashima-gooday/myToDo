@@ -1,31 +1,18 @@
-from flask import Flask, request, jsonify, send_from_directory
+# app.py
+from http.server import SimpleHTTPRequestHandler
+import socketserver
 
-# 同じフォルダ内のHTML/CSS/JSを読み込むための設定
-app = Flask(__name__, static_folder='.')
+PORT = 8000
 
-# 疑似データベース（タスクを保存するリスト）
-tasks = []
+print(f"--- ToDo App Server booting on port {PORT} ---")
 
-# トップページ（index.html）を表示するルート
-@app.route('/')
-def index():
-    return send_from_directory('.', 'index.html')
 
-# CSSやJSなどの静的ファイルを返すルート
-@app.route('/<path:filename>')
-def serve_static(filename):
-    return send_from_directory('.', filename)
+class MyHandler(SimpleHTTPRequestHandler) {
+    def do_GET(self):
+        print(f"Request received: {self.path}")
+        super().do_GET()
+}
 
-# タスクを追加するAPIエンドポイント
-@app.route('/api/tasks', methods=['POST'])
-def add_task():
-    data = request.json
-    
-    # 受け取ったデータをタスクリストに追加
-    tasks.add(data)
-    
-    return jsonify({"message": "タスクを追加しました", "tasks": tasks})
-
-if __name__ == '__main__':
-    print("サーバーを起動します。ブラウザで http://localhost:8000 にアクセスしてください。")
-    app.run(port=8000, debug=True)
+  with socketserver.TCPServer(("", PORT), MyHandler) as httpd:
+    print(f"Server is running at http://localhost:{PORT}")
+    httpd.serve_forever()
