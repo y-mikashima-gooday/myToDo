@@ -2,124 +2,302 @@
 :root {
     --bg-color: #e0e5ec;
     --primary-color: #6c5ce7;
+    --primary-dark: #5649c9;
     --text-color: #37474f;
+    --muted-text: #6b7a86;
     --shadow-light: #ffffff;
     --shadow-dark: #a3b1c6;
+    --danger-color: #d63031;
+    --success-color: #00b894;
+    --high-color: #ff7675;
+    --med-color: #ffeaa7;
+    --low-color: #81ecec;
+}
+
+* {
+    box-sizing: border-box;
 }
 
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
+    padding: 32px 16px;
 }
 
 .main-wrapper {
-    width: 90%;
-    max-width: 600px;
-    margin-top: 40px;
+    width: 100%;
+    max-width: 640px;
+}
+
+header {
+    margin-bottom: 24px;
 }
 
 header h1 {
+    margin: 0;
     text-align: center;
     color: var(--primary-color);
+    font-size: 2rem;
+    font-weight: 700;
     text-shadow: 2px 2px 4px var(--shadow-dark);
 }
 
-/* ニューモーフィズムの基本スタイル（凸） */
-.neumorphic-card, .neumorphic-btn, input, select {
+.neumorphic-card,
+.neumorphic-btn,
+input,
+select {
     background: var(--bg-color);
     border: none;
-    border-radius: 15px;
-    box-shadow: 9px 9px 16px var(--shadow-dark), 
-                -9px -9px 16px var(--shadow-light);
-    padding: 15px;
+    border-radius: 16px;
+    box-shadow:
+        9px 9px 16px var(--shadow-dark),
+        -9px -9px 16px var(--shadow-light);
     transition: all 0.2s ease;
 }
 
-/* 入力フィールドスタイル */
-.input-section, .controls-section {
+.neumorphic-card {
+    padding: 18px;
+}
+
+.input-section,
+.controls-section {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     margin-bottom: 20px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 1rem;
+    color: var(--text-color);
+    outline: none;
+    box-shadow:
+        inset 3px 3px 6px var(--shadow-dark),
+        inset -3px -3px 6px var(--shadow-light);
+}
+
+input::placeholder {
+    color: #8a97a1;
 }
 
 .meta-inputs {
     display: flex;
-    gap: 10px;
+    gap: 12px;
 }
 
-input, select {
-    box-shadow: inset 3px 3px 6px var(--shadow-dark), 
-                inset -3px -3px 6px var(--shadow-light);
-    color: var(--text-color);
+.meta-inputs input,
+.meta-inputs select {
+    flex: 1;
+    min-width: 0;
 }
 
-/* ボタン（凸） */
 .neumorphic-btn {
+    padding: 14px 16px;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 700;
+    font-size: 0.98rem;
     color: var(--primary-color);
     text-align: center;
 }
 
-/* ボタンクリック時（凹） */
+.neumorphic-btn:hover {
+    transform: translateY(-1px);
+}
+
 .neumorphic-btn:active {
-    box-shadow: inset 3px 3px 6px var(--shadow-dark), 
-                inset -3px -3px 6px var(--shadow-light);
+    transform: translateY(0);
+    box-shadow:
+        inset 3px 3px 6px var(--shadow-dark),
+        inset -3px -3px 6px var(--shadow-light);
 }
 
 .neumorphic-btn.primary {
-    background-color: var(--primary-color);
-    color: white;
+    background: var(--primary-color);
+    color: #ffffff;
+    box-shadow:
+        6px 6px 12px rgba(108, 92, 231, 0.35),
+        -6px -6px 12px var(--shadow-light);
 }
 
-/* タスクリストのスタイル */
-ul {
+.neumorphic-btn.primary:hover {
+    background: var(--primary-dark);
+}
+
+.filter-btns {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 12px 14px;
+    border: none;
+    border-radius: 12px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow:
+        6px 6px 12px var(--shadow-dark),
+        -6px -6px 12px var(--shadow-light);
+    transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+    transform: translateY(-1px);
+}
+
+.filter-btn.active {
+    color: var(--primary-color);
+    box-shadow:
+        inset 3px 3px 6px var(--shadow-dark),
+        inset -3px -3px 6px var(--shadow-light);
+}
+
+.list-section {
+    margin-top: 8px;
+}
+
+#todo-list {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
-li {
+#todo-list li {
     background: var(--bg-color);
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 15px;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 5px 5px 10px var(--shadow-dark);
-}
-
-li.completed .task-title {
-    color: #e0e5ec; 
-    text-decoration: line-through;
+    gap: 14px;
+    box-shadow:
+        6px 6px 12px var(--shadow-dark),
+        -6px -6px 12px var(--shadow-light);
 }
 
 .task-info {
+    flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
+    gap: 6px;
+}
+
+.task-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-color);
+    line-height: 1.4;
+    word-break: break-word;
 }
 
 .task-date {
-    font-size: 0.8rem;
-    color: #888;
+    font-size: 0.85rem;
+    color: var(--muted-text);
 }
 
-.prio-high { border-left: 5px solid #ff7675; }
-.prio-med  { border-left: 5px solid #ffeaa7; }
-.prio-low  { border-left: 5px solid #81ecec; }
+.action-btns {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
 
 .action-btns button {
-    margin-left: 5px;
-    background: none;
+    width: 42px;
+    height: 42px;
     border: none;
+    border-radius: 12px;
+    background: var(--bg-color);
+    box-shadow:
+        5px 5px 10px var(--shadow-dark),
+        -5px -5px 10px var(--shadow-light);
     cursor: pointer;
     font-size: 1.1rem;
+    transition: all 0.2s ease;
 }
 
-.check-btn { color: #00b894; }
-.trash-btn { color: #d63031; }
+.action-btns button:hover {
+    transform: translateY(-1px);
+}
+
+.action-btns button:active {
+    transform: translateY(0);
+    box-shadow:
+        inset 3px 3px 6px var(--shadow-dark),
+        inset -3px -3px 6px var(--shadow-light);
+}
+
+.check-btn {
+    color: var(--success-color);
+}
+
+.trash-btn {
+    color: var(--danger-color);
+}
+
+.prio-high {
+    border-left: 6px solid var(--high-color);
+}
+
+.prio-med {
+    border-left: 6px solid var(--med-color);
+}
+
+.prio-low {
+    border-left: 6px solid var(--low-color);
+}
+
+li.completed {
+    opacity: 0.92;
+}
+
+li.completed .task-title {
+    color: var(--text-color);
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+    opacity: 0.6;
+}
+
+li.completed .task-date {
+    opacity: 0.55;
+}
+
+@media (max-width: 640px) {
+    body {
+        padding: 20px 12px;
+    }
+
+    header h1 {
+        font-size: 1.7rem;
+    }
+
+    .meta-inputs {
+        flex-direction: column;
+    }
+
+    .filter-btns {
+        flex-direction: column;
+    }
+
+    #todo-list li {
+        align-items: flex-start;
+    }
+
+    .action-btns {
+        align-self: center;
+    }
+}
