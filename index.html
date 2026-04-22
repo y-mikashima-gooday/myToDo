@@ -3,25 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyToDo</title>
+    <title>Advanced ToDo Pro</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <h1>ToDoリスト</h1>
-        
-        <div class="input-container">
-            <input type="text" id="task-input" placeholder="タスクを入力してください">
-            <button id="add-btn" onclick="addTask()">追加</button>
+    <div class="main-wrapper">
+        <header>
+            <h1><i class="fas fa-tasks"></i> TaskMaster Pro</h1>
+        </header>
+
+        <div class="neumorphic-card input-section">
+            <input type="text" id="task-name" placeholder="新しいタスク名...">
+            <div class="meta-inputs">
+                <input type="date" id="task-date">
+                <select id="task-priority">
+                    <option value="1">優先度：低</option>
+                    <option value="2" selected>優先度：中</option>
+                    <option value="3">優先度：高</option>
+                </select>
+            </div>
+            <button id="add-btn　" class="neumorphic-btn primary"><i class="fas fa-plus"></i> 追加</button>
         </div>
 
-        <ul id="task-list"></ul>
+        <div class="neumorphic-card controls-section">
+            <input type="text" id="search-input" placeholder="タスクを検索...">
+            <div class="filter-btns">
+                <button class="filter-btn active" data-filter="all">すべて</button>
+                <button class="filter-btn" data-filter="active">未完了</button>
+                <button class="filter-btn" data-filter="completed">完了済み</button>
+            </div>
+        </div>
 
-        <div class="footer">
-            <button id="clear-btn">すべてクリア</button>
+        <div class="list-section">
+            <ul id="todo-list">
+                </ul>
         </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>

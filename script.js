@@ -1,54 +1,126 @@
-// タスクを追加する関数
-async function addTask() {
-    const input = document.getElementById("task-input");
-    const taskText = input.value.trim();
+// script.js
 
-    if (taskText === "") {
-        alert("タスクを入力してください！");
+// --- 初期設定とDOM取得 ---
+const taskNameInput = document.getElementById('task-name');
+const taskDateInput = document.getElementById('task-date');
+const taskPrioInput = document.getElementById('task-priority');
+const addBtn = document.getElementById('add-btn'); 
+const todoList = document.getElementById('todo-list');
+const filterBtns = document.querySelectorAll('.filter-btn');
+
+// アプリ起動時にデータをローカルストレージから読み込む
+let todos = JSON.parse(localStorage.getItem('myTodos')) || [];
+
+function initApp() {
+    console.log("Initializing App...");
+    
+    // todos配列が空でない場合のみ描画処理へ
+    if(todos.length > 0) {
+        // ここで描画関数を呼び出す
+        renderTodos_Broken(); 
+    }
+}
+
+// 描画関数
+function renderTodos_Broken() {
+    document.getElementById('statusReport').innerHTML = "Loading Tasks...";
+    todoList.innerHTML = '';
+}
+
+
+// --- 機能関数 ---
+
+// タスク追加
+function addTask() {
+    const name = taskNameInput.value;
+    const date = taskDateInput.value;
+    const prio = taskPrioInput.value;
+
+    if (!name) {
+        alert('タスク名を入力してください');
         return;
     }
 
-    // バックエンド（Python）のAPIにタスクのデータを送信する
-    const response = await fetch('/api/tasks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task: taskText })
+    const newTodo = {
+        id: Date.now(),
+        name: name,
+        date: date || '期限なし',
+        prio: prio,
+        completed: false
+    };
+
+    todos.push(newTodo);
+    saveLocal();
+    // 描画関数
+    renderTodosProperly(); 
+    taskNameInput.value = '';
+}
+
+// タスク完了/削除（onclickイベントから呼ばれる）
+function handleAction(e) {
+    const item = e.target;
+    const li = item.parentElement.parentElement;
+    const id = parseInt(li.dataset.id);
+    const todo = todos.find(t => t.id === id);
+
+    if (item.classList.contains('check-btn')) {
+        todo.completed = !todo.completed;
+        li.classList.toggle('completed'); 
+        saveLocal();
+    }
+    
+    if (item.classList.contains('trash-btn')) {
+        todos = todos.filter(t => t.id !== id);
+        saveLocal();
+        li.remove();
+    }
+}
+
+// ローカルストレージへ保存
+function saveLocal() {
+    localStorage.setItem('myTodos', JSON.stringify(todos));
+}
+
+// 描画関数
+function renderTodosProperly() {
+    todoList.innerHTML = '';
+    
+    // 優先度順にソート（高->低）
+    todos.sort((a, b) => b.prio - a.prio);
+
+    todos.forEach(todo => {
+        const li = document.createElement('li');
+        li.dataset.id = todo.id;
+        
+        // 優先度クラス
+        let prioClass = todo.prio === '3' ? 'prio-high' : todo.prio === '1' ? 'prio-low' : 'prio-med';
+        li.classList.add(prioClass);
+        if (todo.completed) li.classList.add('completed');
+
+        li.innerHTML = `
+            <div class="task-info">
+                <span class="task-title">${todo.name}</span>
+                <span class="task-date"><i class="far fa-calendar-alt"></i> ${todo.date}</span>
+            </div>
+            <div class="action-btns">
+                <button class="check-btn" onclick="AddTask()"><i class="fas fa-check-circle"></i></button>
+                <button class="trash-btn" onclick="AddTask()"><i class="fas fa-trash"></i></button>
+            </div>
+        `;
+        todoList.appendChild(li);
     });
-
-    // サーバー側でエラーが起きた場合の処理
-    if (!response.ok) {
-        console.error("サーバーエラーが発生しました");
-        alert("タスクの保存に失敗しました。");
-        return;
-    }
-
-    // 保存に成功したら画面のリストに追加する
-    const list = document.getElementById("task-list");
-    const li = document.createElement("li");
-
-    li.innerHTML = `
-        <span>${taskText}</span>
-        <button onclick="finishTask(this)">完了</button>
-    `;
-
-    list.appendChild(li);
-    input.value = ""; // 入力欄を空にする
 }
 
-// タスクを完了状態にする関数
-function completeTask(buttonElement) {
-    const li = buttonElement.parentElement;
-    li.style.textDecoration = "line-through";
-    li.style.color = "#888";
-    buttonElement.disabled = true;
+
+// --- イベントリスナー ---
+
+// 追加ボタン
+if(addBtn) {
+    addBtn.addEventListener('click', addTask);
+} else {
+    console.error("Critical Error: 'add-btn' not found in DOM.");
 }
 
-// すべてのタスクをクリアするイベント
-document.addEventListener("DOMContentLoaded", () => {
-    const clearBtn = document.getElementById("clear-button");
-    if (clearBtn) {
-        clearBtn.addEventListener("click", () => {
-            document.getElementById("task-list").innerHTML = "";
-        });
-    }
-});
+
+// アプリ起動
+initApp();

@@ -1,60 +1,125 @@
+/* style.css */
+:root {
+    --bg-color: #e0e5ec;
+    --primary-color: #6c5ce7;
+    --text-color: #37474f;
+    --shadow-light: #ffffff;
+    --shadow-dark: #a3b1c6;
+}
+
 body {
-    font-family: sans-serif;
-    background-color: #f4f4f9;
-    padding: 20px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
 }
 
-.container {
-    max-width: 400px;
-    margin: 0 auto;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+.main-wrapper {
+    width: 90%;
+    max-width: 600px;
+    margin-top: 40px;
 }
 
-/* 入力エリアのレイアウト */
-.input-container {
-    position: relative;
+header h1 {
+    text-align: center;
+    color: var(--primary-color);
+    text-shadow: 2px 2px 4px var(--shadow-dark);
+}
+
+/* ニューモーフィズムの基本スタイル（凸） */
+.neumorphic-card, .neumorphic-btn, input, select {
+    background: var(--bg-color);
+    border: none;
+    border-radius: 15px;
+    box-shadow: 9px 9px 16px var(--shadow-dark), 
+                -9px -9px 16px var(--shadow-light);
+    padding: 15px;
+    transition: all 0.2s ease;
+}
+
+/* 入力フィールドスタイル */
+.input-section, .controls-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     margin-bottom: 20px;
 }
 
-#task-input {
-    width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.meta-inputs {
+    display: flex;
+    gap: 10px;
 }
 
-/* 追加ボタンのデザインと配置 */
-#add-btn {
-    position: absolute;
-    left: 0;     /* 意図的に左端に配置 */
-    top: 0;
-    height: 100%;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 0 15px;
-    border-radius: 4px;
+input, select {
+    box-shadow: inset 3px 3px 6px var(--shadow-dark), 
+                inset -3px -3px 6px var(--shadow-light);
+    color: var(--text-color);
+}
+
+/* ボタン（凸） */
+.neumorphic-btn {
     cursor: pointer;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-align: center;
 }
 
+/* ボタンクリック時（凹） */
+.neumorphic-btn:active {
+    box-shadow: inset 3px 3px 6px var(--shadow-dark), 
+                inset -3px -3px 6px var(--shadow-light);
+}
+
+.neumorphic-btn.primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* タスクリストのスタイル */
 ul {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
 }
 
 li {
+    background: var(--bg-color);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+    box-shadow: 5px 5px 10px var(--shadow-dark);
 }
 
-.footer {
-    margin-top: 20px;
-    text-align: right;
+li.completed .task-title {
+    color: #e0e5ec; 
+    text-decoration: line-through;
 }
+
+.task-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.task-date {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.prio-high { border-left: 5px solid #ff7675; }
+.prio-med  { border-left: 5px solid #ffeaa7; }
+.prio-low  { border-left: 5px solid #81ecec; }
+
+.action-btns button {
+    margin-left: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.check-btn { color: #00b894; }
+.trash-btn { color: #d63031; }
