@@ -2,21 +2,42 @@
 
 const taskNameInput = document.getElementById('task-name');
 const taskDateInput = document.getElementById('task-date');
+const taskTimeInput = document.getElementById('task-time');
 const taskPrioInput = document.getElementById('task-priority');
 const addBtn = document.getElementById('add-btn');
 const todoList = document.getElementById('todo-list');
 const filterBtns = document.querySelectorAll('.filter-btn');
+const searchInput = document.getElementById('search-input');
+const sortSelect = document.getElementById('sort-select');
 
 let todos = JSON.parse(localStorage.getItem('myTodos')) || [];
+let currentFilter = 'all';
 
 function initApp() {
-    console.log("Initializing App...");
+    setupEventListeners();
     renderTodosProperly();
+}
+
+function setupEventListeners() {
+    if (addBtn) addBtn.addEventListener('click', addTask);
+    todoList.addEventListener('click', handleAction);
+    if (searchInput) searchInput.addEventListener('input', renderTodosProperly);
+    if (sortSelect) sortSelect.addEventListener('change', renderTodosProperly);
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            currentFilter = e.target.dataset.filter;
+            renderTodosProperly();
+        });
+    });
 }
 
 function addTask() {
     const name = taskNameInput.value.trim();
-    const date = taskDateInput.value;
+    const dateVal = taskDateInput.value; // YYYY-MM-DD
+    const timeVal = taskTimeInput.value; // HH:MM (省略時は空文字)
     const prio = taskPrioInput.value;
 
     if (!name) {
@@ -27,7 +48,8 @@ function addTask() {
     const newTodo = {
         id: Date.now(),
         name: name,
-        date: date || '期限なし',
+        date: dateVal || null,
+        time: timeVal || null,
         prio: prio,
         completed: false
     };
@@ -38,6 +60,7 @@ function addTask() {
 
     taskNameInput.value = '';
     taskDateInput.value = '';
+    taskTimeInput.value = '';
     taskPrioInput.value = '2';
 }
 
@@ -47,25 +70,76 @@ function saveLocal() {
 
 function renderTodosProperly() {
     todoList.innerHTML = '';
+    const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const sortType = sortSelect ? sortSelect.value : 'prio-desc';
+    const now = new Date();
 
-    todos.sort((a, b) => Number(b.prio) - Number(a.prio));
+    let filteredTodos = [...todos];
 
-    todos.forEach(todo => {
+    // 1. ステータスフィルター
+    if (currentFilter === 'active') {
+        filteredTodos = filteredTodos.filter(t => !t.completed);
+    } else if (currentFilter === 'completed') {
+        filteredTodos = filteredTodos.filter(t => t.completed);
+    }
+
+    // 2. 検索絞り込み
+    if (searchTerm) {
+        filteredTodos = filteredTodos.filter(t => t.name.toLowerCase().includes(searchTerm));
+    }
+
+    // 3. ソート（日付順 / 優先度順）
+    filteredTodos.sort((a, b) => {
+        if (sortType === 'date-asc') {
+            if (!a.date) return 1;
+            if (!b.date) return -1;
+            
+            const aStr = `${a.date}T${a.time || '23:59'}`;
+            const bStr = `${b.date}T${b.time || '23:59'}`;
+            return new Date(aStr) - new Date(bStr);
+        } else {
+            return Number(b.prio) - Number(a.prio);
+        }
+    });
+
+    // 4. DOM描写
+    filteredTodos.forEach(todo => {
         const li = document.createElement('li');
         li.dataset.id = todo.id;
 
         const prioClass =
             todo.prio === '3' ? 'prio-high' :
-            todo.prio === '1' ? 'prio-low' :
-            'prio-med';
-
+            todo.prio === '1' ? 'prio-low' : 'prio-med';
         li.classList.add(prioClass);
+
+        // 期限切れ判定（未完了かつ指定日時を過ぎているか）
+        let isExpired = false;
+        if (todo.date && !todo.completed) {
+            // 時間が省略された場合は「その日の 23:59:59」を締め切りとする
+            const timeString = todo.time ? `${todo.time}:00` : '23:59:59';
+            const taskDeadline = new Date(`${todo.date}T${timeString}`);
+            if (now > taskDeadline) {
+                isExpired = true;
+            }
+        }
+
+        if (isExpired) li.classList.add('expired');
         if (todo.completed) li.classList.add('completed');
 
+        // 表示用の日付フォーマット
+        let displayDate = '期限なし';
+        if (todo.date) {
+            const formattedDate = todo.date.replace(/-/g, '/');
+            displayDate = todo.time ? `${formattedDate} ${todo.time}` : formattedDate;
+        }
+
         li.innerHTML = `
-            <div class="task-info">
-                <span class="task-title">${todo.name}</span>
-                <span class="task-date"><i class="far fa-calendar-alt"></i> ${todo.date}</span>
+            <div class="task-content">
+                <span class="task-title">
+                    ${isExpired ? '<span class="expired-badge">⚠️ 期限切れ</span>' : ''}
+                    ${todo.name}
+                </span>
+                <span class="task-date"><i class="far fa-calendar-alt"></i> ${displayDate}</span>
             </div>
             <div class="action-btns">
                 <button class="check-btn"><i class="fas fa-check-circle"></i></button>
@@ -100,13 +174,5 @@ function handleAction(e) {
         renderTodosProperly();
     }
 }
-
-if (addBtn) {
-    addBtn.addEventListener('click', addTask);
-} else {
-    console.error("Critical Error: 'add-btn' not found in DOM.");
-}
-
-todoList.addEventListener('click', handleAction);
 
 initApp();
